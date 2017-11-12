@@ -245,7 +245,7 @@ int ExpertSystem::TripleLogicA(int in)
     if (in <= 5) return 0;
     switch (in) {
         case 6:
-            return 3;
+            return 2;
         case 7:
             return 6;
         default:

@@ -102,7 +102,7 @@ ExpertSystem::ExpertSystem() :
 void ExpertSystem::Run()
 {
     Greet();
-    AskQuestions();
+    //AskQuestions();
     CalculateRecommendations();
     ShowRecommendations();
 }
@@ -164,6 +164,28 @@ void ExpertSystem::Setup()
             TripleLogic = [this](int v) { return this->TripleLogicB(v); };
             break;
     }
+	std::cout << "Wybierz sposób dzia³ania systemu (0 - mno¿enie, 1 - minimum)." << std::endl;
+	while (true) {
+		std::cin >> temp;
+		if (temp.size() != 1) {
+			std::cout << "Niezrozumia³a odpowiedŸ, spróbuj jeszcze raz." << std::endl;
+			continue;
+		}
+		fuzz = temp[0];
+		if ((fuzz != '0') && (fuzz != '1')) {
+			std::cout << "Niezrozumia³a odpowiedŸ, spróbuj jeszcze raz." << std::endl;
+			continue;
+		}
+		break;
+	}
+	switch (fuzz) {
+	case '0':
+		Choice = [this](double a, double b) { return a * b; };
+		break;
+	case '1':
+		Choice = [this](double a, double b) { return a < b ? a : b; };
+		break;
+	}
 }
 
 void ExpertSystem::AskQuestions() {
@@ -180,27 +202,29 @@ void ExpertSystem::CalculateRecommendations() {
 void ExpertSystem::DFS(Node & node)
 {
     QuestionNode& qn = Questions[QIndex[node.name]];
+	if (!qn.asked)
+		qn.Ask();
     int left, mid, right = qn.GetAnswer();
     if (qn.isYesNo) {
         left = right ? 0 : 1;
-        SetChildrenWeights(node.left, node.GetWeight() * left);
+        SetChildrenWeights(node.left, Choice(node.GetWeight(), left));
         auto it = std::find_if(Tree.begin(), Tree.end(), [&node](auto n) {return n.name == node.left;});
-        if (it != Tree.end())
+        if (it != Tree.end() && left)
             DFS(*it);
-        SetChildrenWeights(node.right, node.GetWeight() * right);
+        SetChildrenWeights(node.right, Choice(node.GetWeight(), right));
         it = std::find_if(Tree.begin(), Tree.end(), [&node](auto n) {return n.name == node.right;});
-        if (it != Tree.end())
+        if (it != Tree.end() && right)
             DFS(*it);
     }
     else if (node.mid == "") {
         left = 10 - right;
-        SetChildrenWeights(node.left, node.GetWeight() * left / 10);
+        SetChildrenWeights(node.left, Choice(node.GetWeight(), left * 1.0 / 10));
         auto it = std::find_if(Tree.begin(), Tree.end(), [&node](auto n) {return n.name == node.left;});
-        if (it != Tree.end())
+        if (it != Tree.end() && left != 0)
             DFS(*it);
-        SetChildrenWeights(node.right, node.GetWeight() * right / 10);
+        SetChildrenWeights(node.right, Choice(node.GetWeight(), right * 1.0 / 10));
         it = std::find_if(Tree.begin(), Tree.end(), [&node](auto n) {return n.name == node.right;});
-        if (it != Tree.end())
+        if (it != Tree.end() && right != 0)
             DFS(*it);
     }
     else {
@@ -209,17 +233,17 @@ void ExpertSystem::DFS(Node & node)
         right = TripleLogic(right);
         mid = 10 - right - left;
 
-        SetChildrenWeights(node.left, node.GetWeight() * left / 10);
+        SetChildrenWeights(node.left, Choice(node.GetWeight(), left * 1.0 / 10));
         auto it = std::find_if(Tree.begin(), Tree.end(), [&node](auto n) {return n.name == node.left;});
-        if (it != Tree.end())
+        if (it != Tree.end() && left != 0)
             DFS(*it);
-        SetChildrenWeights(node.right, node.GetWeight() * right / 10);
+        SetChildrenWeights(node.right, Choice(node.GetWeight(), right * 1.0 / 10));
         it = std::find_if(Tree.begin(), Tree.end(), [&node](auto n) {return n.name == node.right;});
-        if (it != Tree.end())
+        if (it != Tree.end() && right != 0)
             DFS(*it);
-        SetChildrenWeights(node.mid, node.GetWeight() * mid / 10);
+        SetChildrenWeights(node.mid, Choice(node.GetWeight(), mid * 1.0 / 10));
         it = std::find_if(Tree.begin(), Tree.end(), [&node](auto n) {return n.name == node.mid;});
-        if (it != Tree.end())
+        if (it != Tree.end() && mid != 0)
             DFS(*it);
     }
 }
@@ -228,8 +252,11 @@ void ExpertSystem::ShowRecommendations() {
     std::sort(Answers.begin(), Answers.end(), [](auto a, auto b) {
         return b.GetValue() < a.GetValue();
     });
+	double norm = 0;
+	for (auto n : Answers)
+		norm += n.GetValue();
     for (auto& answer : Answers)
-        answer.Show();
+        answer.Show(norm);
 }
 
 void ExpertSystem::SetChildrenWeights(const std::string& which, double val) {

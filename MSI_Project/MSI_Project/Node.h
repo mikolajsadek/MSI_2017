@@ -8,6 +8,7 @@ public:
     void Ask();
     int GetAnswer() { return answer; }
     const bool isYesNo;
+	bool asked = false;
 private:
     std::string question;
     int answer;
@@ -16,7 +17,7 @@ private:
 struct AnswerNode {
 public:
     AnswerNode(std::string node_answer);
-    void Show();
+    void Show(double n);
     double GetValue() { return value; }
     void IncValueBy(double val) { value += val; }
 private:

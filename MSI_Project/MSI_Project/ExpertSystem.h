@@ -25,6 +25,7 @@ private:
     std::function<int(int)> TripleLogic;
     int TripleLogicA(int in);
     int TripleLogicB(int in);
+	std::function<double(double, double)> Choice;
 
     std::array<QuestionNode, kQuestionsCount> Questions;
     std::array<AnswerNode, kAnswersCount> Answers;

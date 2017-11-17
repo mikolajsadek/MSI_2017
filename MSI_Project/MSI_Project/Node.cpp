@@ -10,6 +10,7 @@ QuestionNode::QuestionNode(std::string node_question, bool yesno) :
     isYesNo(yesno) {}
 
 void QuestionNode::Ask() {
+	asked = true;
     std::cout << question << std::endl;
     int min = 0;
     int max = isYesNo ? 1 : 10;
@@ -38,8 +39,8 @@ AnswerNode::AnswerNode(std::string node_answer) :
     value(0),
     final(false) {}
 
-void AnswerNode::Show() {
-    std::cout << std::setw(12) << answer << "\t" << value << std::endl;
+void AnswerNode::Show(double n) {
+    std::cout << std::setw(12) << answer << "\t" << value / n << std::endl;
 }
 
 Node::Node(std::string node_name, std::string left_name, std::string right_name, std::string mid_name) :

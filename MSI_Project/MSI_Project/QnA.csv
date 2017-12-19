@@ -1,0 +1,14 @@
+"QnA","Czy jakoœæ powietrza jest dobra?","Czy masz kolegów do gry","Czy masz wiêcej ni¿ 3 kolegów do gry?","Czy lubisz gry kontaktowe?","Czy lubisz p³ywaæ?","Czy blisko jest basen?","Czy blisko jest si³ownia?","Czy pada?","Czy jest ciep³o?","Czy jest s³onecznie?","Czy blisko jest pla¿a?","Czy mocno wieje?","Czy powietrze jest wilgotne?","Czy lubisz biegaæ?","Czy lubisz jazdê rowerem?","Czy lubisz jazdê na rolkach?","Czy jest œlisko?","Czy blisko jest stok?"
+"Dom",1,0,0,0,1,0,0,1,2,1,0,1,1,0,0,0,0,0
+"Spacer",1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0
+"£y¿wy",1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+"Narty",1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1
+"Rolki",1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0
+"Rower",1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0
+"Bieganie",1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0
+"Pla¿a",1,0,0,0,0,0,0,0,2,1,1,0,0,0,0,0,0,0
+"Si³ownia",0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0
+"Basen",0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0
+"Tenis sto³owy",0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"Koszykówka",0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"Siatkówka",0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

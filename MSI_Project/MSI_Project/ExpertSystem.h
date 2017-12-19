@@ -4,15 +4,15 @@
 #include <functional>
 #include <map>
 
+#include "ExpertInterface.h"
 #include "Node.h"
 constexpr int kQuestionsCount = 18;
 constexpr int kAnswersCount = 13;
 
-class ExpertSystem {
+class ExpertSystem : public ExpertInterface {
 public:
     ExpertSystem();
-    void Run();
-    bool ifRepeat();
+    void Run() override;
 private:
     void Greet();
     void Setup();
@@ -36,5 +36,4 @@ private:
 
     // decision tree
     std::array<Node, kQuestionsCount + 1> Tree;
-
 };

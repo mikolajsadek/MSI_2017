@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 
-ExpertSystem::ExpertSystem() :
+ExpertSystem::ExpertSystem() : ExpertInterface{},
     Questions{{
         { "Oceñ jakoœæ powietrza.", false },
         { "Czy masz kolegów do gry?", true },
@@ -105,28 +105,6 @@ void ExpertSystem::Run()
     //AskQuestions();
     CalculateRecommendations();
     ShowRecommendations();
-}
-
-bool ExpertSystem::ifRepeat()
-{
-    std::string temp;
-    int val = -1;
-    while (true) {
-        std::cout << "Czy chcesz spróbowaæ jeszcze raz? Odpowiedz 0 (nie) lub 1 (tak)." << std::endl;
-        std::cin >> temp;
-        try {
-            val = std::stoi(temp);
-        }
-        catch (...) {
-            std::cout << "Niezrozumia³a odpowiedŸ, spróbuj jeszcze raz." << std::endl;
-            continue;
-        }
-        if ((val != 0) && (val != 1)) {
-            continue;
-        }
-        break;
-    }
-    return val ? true : false;
 }
 
 void ExpertSystem::Greet() {

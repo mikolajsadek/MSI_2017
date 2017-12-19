@@ -113,10 +113,13 @@
     <ClCompile Include="ExpertSystem.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Node.cpp" />
+    <ClCompile Include="RoughSetExpert.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ExpertInterface.h" />
     <ClInclude Include="ExpertSystem.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="RoughSetExpert.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

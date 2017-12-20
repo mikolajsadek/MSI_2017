@@ -14,13 +14,15 @@ public:
 private:
     // tuple is a node consisting of text, index, and maxval
     // (maxval is uchar, we assume minval for all questions to be 0)
-    std::vector<std::tuple<std::string, int, unsigned char>> Answers;
-    std::vector<std::tuple<std::string, int, unsigned char>> Questions;
+    std::vector<std::tuple<std::string, int, char>> Answers;
+    std::vector<std::tuple<std::string, int, char>> Questions;
+    std::vector<std::string> Decisions;
     std::vector<std::vector<int>> Table;
-    int Na, Nq;
+    int Na, Nq, Nd;
 
     bool ReadTable();
     void GetMaxVals();
+    void FillDecisions();
     void FindReduct();
     void Greet();
     void Ask();

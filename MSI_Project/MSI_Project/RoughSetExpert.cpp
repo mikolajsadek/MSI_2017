@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 
-using node = std::tuple<std::string, int, unsigned char>;
+using node = std::tuple<std::string, int, char>;
 
 RoughSetExpert::RoughSetExpert() : ExpertInterface{}
 {
@@ -15,6 +15,7 @@ RoughSetExpert::RoughSetExpert() : ExpertInterface{}
         throw std::exception("Invalid table");
     }
     GetMaxVals();
+    FillDecisions();
     FindReduct();
 }
 
@@ -30,8 +31,8 @@ bool RoughSetExpert::ReadTable()
 {
     int q = 0;
     int a = 0;
+    int c = 0;
     std::string tmp, val;
-    std::stringstream ss;
     std::ifstream fin("QnA.csv");
     // WARNING - there is no check for uniqueness of questions and answers, we
     // assume user provides valid data and only check if file format is correct
@@ -40,21 +41,21 @@ bool RoughSetExpert::ReadTable()
         return false;
     // now parse questions
     getline(fin, tmp);
-    ss = std::move(std::stringstream(tmp));
+    std::stringstream ss(tmp);
     while (getline(ss, val, ',')) {
         val = val.substr(1);
         val.pop_back();
-        Questions.emplace_back(node{ val, q++, 0 });
+        Questions.emplace_back(std::make_tuple(val, q++, 0));
         Table.emplace_back(std::vector<int>());
-        // Table[q][a]
+        // Data for given question and answer are stored in Table[q][a]
     }
     // now parse answers and values
     while (getline(fin, tmp)) {
-        ss = std::move(std::stringstream(tmp));
+        std::stringstream ss(tmp);
         getline(ss, val, ',');
         val = val.substr(1);
         val.pop_back();
-        Answers.emplace_back(node{ val, a++, 0 });
+        Answers.emplace_back(std::make_tuple(val, a++, 0));
         int qi = 0;
         while (getline(ss, val, ',')) {
             Table[qi].emplace_back(stoi(val));
@@ -74,6 +75,18 @@ void RoughSetExpert::GetMaxVals()
         auto& column = Table[i];
         auto max = std::max_element(column.begin(), column.end());
         std::get<2>(Questions[i]) = static_cast<unsigned char>(*max);
+    }
+}
+
+void RoughSetExpert::FillDecisions()
+{
+    for (auto& a : Answers) {
+        auto Text = std::get<std::string>(a);
+        auto it = std::find(Decisions.begin(), Decisions.end(), Text);
+        if (it != Decisions.end())
+            continue;
+        Decisions.push_back(Text);
+        ++Nd;
     }
 }
 

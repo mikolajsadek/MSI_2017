@@ -21,7 +21,7 @@ private:
     std::vector<std::tuple<std::string, int, char>> Questions;
     std::vector<std::string> Decisions;
     std::vector<std::vector<int>> Table;
-    std::vector<std::vector<int>> IndistinguishableMatrix;
+    std::vector<std::vector<std::set<int>>> IndistinguishableMatrix;
     std::set<std::vector<int>> Inconsistencies;
     std::vector<bool> Core;
     std::set<std::set<int>> Reducts;
@@ -38,6 +38,7 @@ private:
     void Generalize();
     void DeleteLowerScore();
     void RemoveDuplicates();
+	void BuildIndistinguishableMatrix();
     void FindCore();
     void FindReducts();
 

@@ -1,3 +1,27 @@
 ﻿  RoughSetExpert.cpp
-  MSI_Project.vcxproj -> C:\Users\Miki\MSI_2017\MSI_Project\Debug\MSI_Project.exe
-  MSI_Project.vcxproj -> C:\Users\Miki\MSI_2017\MSI_Project\Debug\MSI_Project.pdb (Partial PDB)
+c:\users\fmaruszczak\source\repos\msi_2017\msi_project\msi_project\roughsetexpert.cpp(189): warning C4018: '<': signed/unsigned mismatch
+c:\users\fmaruszczak\source\repos\msi_2017\msi_project\msi_project\roughsetexpert.cpp(212): warning C4018: '<': signed/unsigned mismatch
+c:\users\fmaruszczak\source\repos\msi_2017\msi_project\msi_project\roughsetexpert.cpp(316): warning C4018: '<': signed/unsigned mismatch
+c:\program files (x86)\microsoft visual studio 14.0\vc\include\xutility(3258): warning C4805: '==': unsafe mix of type 'const int' and type 'bool' in operation
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\xutility(3277): note: see reference to function template instantiation '_InIt std::_Find_unchecked1<_InIt,_Ty>(_InIt,_InIt,const _Ty &,std::false_type)' being compiled
+          with
+          [
+              _InIt=std::_Tree_unchecked_const_iterator<std::_Tree_val<std::_Tree_simple_types<int>>,std::_Iterator_base0>,
+              _Ty=std::_Vb_reference<std::_Wrap_alloc<std::allocator<std::_Vbase>>>
+          ]
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\xutility(3286): note: see reference to function template instantiation '_InIt std::_Find_unchecked<std::_Tree_unchecked_const_iterator<_Mytree,std::_Iterator_base0>,_Ty>(_InIt,_InIt,const _Ty &)' being compiled
+          with
+          [
+              _InIt=std::_Tree_unchecked_const_iterator<std::_Tree_val<std::_Tree_simple_types<int>>,std::_Iterator_base0>,
+              _Mytree=std::_Tree_val<std::_Tree_simple_types<int>>,
+              _Ty=std::_Vb_reference<std::_Wrap_alloc<std::allocator<std::_Vbase>>>
+          ]
+  c:\users\fmaruszczak\source\repos\msi_2017\msi_project\msi_project\roughsetexpert.cpp(317): note: see reference to function template instantiation '_InIt std::find<std::_Tree_const_iterator<std::_Tree_val<std::_Tree_simple_types<int>>>,std::_Vb_reference<std::_Wrap_alloc<std::allocator<_Other>>>>(_InIt,_InIt,const _Ty &)' being compiled
+          with
+          [
+              _InIt=std::_Tree_const_iterator<std::_Tree_val<std::_Tree_simple_types<int>>>,
+              _Other=std::_Vbase,
+              _Ty=std::_Vb_reference<std::_Wrap_alloc<std::allocator<std::_Vbase>>>
+          ]
+  MSI_Project.vcxproj -> C:\Users\Fmaruszczak\Source\Repos\MSI_2017\MSI_Project\Debug\MSI_Project.exe
+  MSI_Project.vcxproj -> C:\Users\Fmaruszczak\Source\Repos\MSI_2017\MSI_Project\Debug\MSI_Project.pdb (Partial PDB)

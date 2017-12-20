@@ -26,6 +26,7 @@ int main() {
         case kRoughSet:
             do {
                 RoughSetExpert SetExpert{};
+                SetExpert.Prepare();
                 SetExpert.Run();
                 repeat = SetExpert.ifRepeat();
             } while (repeat);

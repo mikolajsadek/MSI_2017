@@ -23,6 +23,8 @@ private:
     std::vector<std::vector<int>> Table;
     std::vector<std::vector<int>> IndistinguishableMatrix;
     std::set<std::vector<int>> Inconsistencies;
+    std::vector<bool> Core;
+    std::set<std::set<int>> Reducts;
     int Na, Nq, Nd;
     bool verbose;
 
@@ -36,7 +38,8 @@ private:
     void Generalize();
     void DeleteLowerScore();
     void RemoveDuplicates();
-    void FindReduct();
+    void FindCore();
+    void FindReducts();
 
     void Greet();
     void Ask();

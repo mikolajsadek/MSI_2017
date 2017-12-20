@@ -8,8 +8,8 @@
 using node = std::tuple<std::string, int, char>;
 
 RoughSetExpert::RoughSetExpert() : ExpertInterface{},
-    Input{}, Questions{}, Table{}, Decisions{}, IndistinguishableMatrix{},
-    Inconsistencies{}
+    Input{}, Questions{}, Decisions{}, Table{}, IndistinguishableMatrix{},
+    Inconsistencies{}, Core{}, Reducts{}
 {
     Setup();
     if (!ReadTable()) {
@@ -36,7 +36,7 @@ void RoughSetExpert::Prepare()
         std::cout << "Usuniêto duplikaty danych, jeœli takie istnia³y.\n";
         std::cout << "Pozosta³o " << Na << " konfiguracji pytañ i odpowiedzi.\n";
     }
-    FindReduct();
+    FindReducts();
 }
 
 void RoughSetExpert::Run()
@@ -258,8 +258,35 @@ void RoughSetExpert::RemoveDuplicates()
         std::get<int>(Input[i]) = i;
 }
 
-void RoughSetExpert::FindReduct()
+void RoughSetExpert::FindCore()
 {
+    Core = std::vector<bool>(Nq, false);
+    for (int q = 0; q < Nq; ++q) {
+        bool same = true;
+        for (int i = 0; i < Na; ++i) {
+            for (int j = i + 1; j < Na; ++j) {
+                for (int qi = 0; qi < Nq; ++qi) {
+                    if (q == qi)
+                        continue;
+                    if (Table[q][i] != Table[q][j]) {
+                        same = false;
+                        break;
+                    }
+                }
+                if (same) {
+                    Core[q] = true;
+                    break;
+                }
+            }
+            if (same)
+                break;
+        }
+    }
+}
+
+void RoughSetExpert::FindReducts()
+{
+
 }
 
 void RoughSetExpert::Greet()

@@ -11,23 +11,31 @@ RoughSetExpert::RoughSetExpert() : ExpertInterface{},
     Input{}, Questions{}, Table{}, Decisions{}, IndistinguishableMatrix{},
     Inconsistencies{}
 {
-    //Input = Questions = std::vector<node>();
-    //Table = IndistinguishableMatrix = std::vector<std::vector<int>>();
+    Setup();
     if (!ReadTable()) {
         throw std::exception("Invalid table");
     }
     GetMaxVals();
     FillDecisions();
-    std::cout << "Wczytywanie danych systemu eksperckiego zakoñczone.\n";
-    Setup();
+    if (verbose) {
+        std::cout << "Wczytywanie danych systemu eksperckiego zakoñczone.\n";
+        std::cout << "System wczyta³ " << Nq << " pytañ, " << Nd << " odpowiedzi i " << Na << " konfiguracji pytañ i odpowiedzi.\n";
+    }
 }
 
 void RoughSetExpert::Prepare()
 {
     FindInconsistencies();
-    if (Inconsistencies.size() != 0)
+    if (Inconsistencies.size() != 0) {
+        if (verbose)
+            std::cout << "Wykryto niespójnoœci w danych, trwa usuwanie...\n";
         GetRidOfInconsistency();
+    }
     RemoveDuplicates();
+    if (verbose) {
+        std::cout << "Usuniêto duplikaty danych, jeœli takie istnia³y.\n";
+        std::cout << "Pozosta³o " << Na << " konfiguracji pytañ i odpowiedzi.\n";
+    }
     FindReduct();
 }
 

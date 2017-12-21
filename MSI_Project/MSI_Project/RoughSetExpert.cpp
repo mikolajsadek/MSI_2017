@@ -4,12 +4,15 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <iterator>
 
 using node = std::tuple<std::string, int, char>;
 
+std::set<int> FindReducts(std::vector<std::set<int>>& cellsToConsider);
+
 RoughSetExpert::RoughSetExpert() : ExpertInterface{},
 Input{}, Questions{}, Decisions{}, Table{}, IndistinguishableMatrix{},
-Inconsistencies{}, Core{}, Reducts{}
+Inconsistencies{}, Rules{}, Answers{}
 {
 	Setup();
 	if (!ReadTable()) {
@@ -37,16 +40,13 @@ void RoughSetExpert::Prepare()
 		std::cout << "Pozosta³o " << Na << " konfiguracji pytañ i odpowiedzi.\n";
 	}
 	BuildIndistinguishableMatrix();
-	FindCore();
-	FindReducts();
+	FindRules();
 }
 
 void RoughSetExpert::Run()
 {
-	Greet();
-	Ask();
-	ComputeResult();
-	ShowResult();
+	Greet(); 
+	AskAndShowAnswer();
 }
 
 bool RoughSetExpert::ReadTable()
@@ -103,13 +103,9 @@ void RoughSetExpert::GetMaxVals()
 void RoughSetExpert::FillDecisions()
 {
 	for (auto& a : Input) {
-		auto Text = std::get<std::string>(a);
-		auto it = std::find(Decisions.begin(), Decisions.end(), Text);
-		if (it != Decisions.end())
-			continue;
-		Decisions.push_back(Text);
-		++Nd;
+		Decisions.insert(std::get<std::string>(a));
 	}
+	Nd = Decisions.size();
 }
 
 void RoughSetExpert::Setup()
@@ -289,85 +285,40 @@ void RoughSetExpert::BuildIndistinguishableMatrix()
 	}
 }
 
-void RoughSetExpert::FindCore()
-{
-	Core = std::vector<bool>(Nq, false);
-	for (int i = 0; i < Na; ++i) {
-		for (int j = 0; j < i; ++j) {
-			if (IndistinguishableMatrix[i][j].size() == 1)
-				Core[*IndistinguishableMatrix[i][j].begin()] = true;
-		}
-	}
-	if (verbose) {
-		std::cout << "Znaleziono rdzeñ: [ ";
-		for (int i = 0; i < Nq; ++i) {
-			if (Core[i])
-				std::cout << "\"" << std::get<0>(Questions[i]) << "\" ";
-		}
-		std::cout << "]" << std::endl;
-	}
-}
-
-void RoughSetExpert::FindReducts()
+void RoughSetExpert::FindRules()
 {
 	for (int i = 0; i < Na; ++i) {
+		std::vector<std::set<int>> cells;
 		for (int j = 0; j < i; ++j) {
-			auto& current = IndistinguishableMatrix[i][j];
-			for (int k = 0; k < Core.size(); ++k) {
-				if (std::find(current.begin(), current.end(), Core[k]) == current.end())
-					continue;
-			}
-
-			bool intersectionWithAll = true;
-			for (int ii = 0; ii < Na; ++ii) {
-				for (int jj = 0; jj < ii; ++jj) {
-					auto& currentInner = IndistinguishableMatrix[ii][jj];
-					if ((ii == i && jj == j) || currentInner.empty())
-						continue;
-
-					bool found = false;
-					for (auto const& a : currentInner) {
-						if (std::find(current.begin(), current.end(), a) != current.end()) {
-							found = true;
-							break;
-						}
-					}
-					if (!found) {
-						intersectionWithAll = false;
-						break;
-					}
-				} // for jj
-				if (!intersectionWithAll) {
+			cells.push_back(IndistinguishableMatrix[i][j]);
+		}
+		for (int j = i + 1; j < Na; ++j) {
+			cells.push_back(IndistinguishableMatrix[j][i]);
+		}
+		std::set<int> reducts;
+		while (true) {
+			auto& singleAttr = std::find_if(cells.begin(), cells.end(), [](auto& c) { return c.size() == 1; });
+			if (singleAttr == cells.end())
+				break;
+			int attr = *singleAttr->begin();
+			reducts.insert(attr);
+			while (true) {
+				auto& it = std::find_if(cells.begin(), cells.end(), [attr](auto& c) { return c.find(attr) != c.end(); });
+				if (it == cells.end())
 					break;
-				}
-			} // for ii
-			if (intersectionWithAll) {
-				Reducts.insert(current);
-			}
-		} // for j
-	} // for i
-	std::set<std::set<int>> toRemove;
-	for (auto& it = Reducts.begin(); it != Reducts.end(); ++it) {
-		for (auto& innerIt = std::next(it); innerIt != Reducts.end(); ++innerIt) {
-			auto& bigger = it->size() >= innerIt->size() ? *it : *innerIt;
-			auto& smaller = it->size() < innerIt->size() ? *it : *innerIt;
-
-			std::vector<int> biggerVec(bigger.begin(), bigger.end());
-			std::sort(biggerVec.begin(), biggerVec.end());
-			std::vector<int> smallerVec(smaller.begin(), smaller.end());
-			std::sort(smallerVec.begin(), smallerVec.end());
-
-			if (std::includes(bigger.begin(), bigger.end(), smallerVec.begin(), smallerVec.end())) {
-				toRemove.insert(bigger);
-			}
+				cells.erase(it);
+			}					
 		}
+		auto& otherReducts = FindReducts(cells);
+		reducts.insert(otherReducts.begin(), otherReducts.end());
+		std::string conclusion = std::get<0>(Input[i]);
+		std::unordered_map<int, char> conditions;
+		for (auto& a : reducts) {
+			conditions.insert({ a, Table[a][i] });
+		}
+		Rules.emplace_back(std::make_tuple(conditions, conclusion));
 	}
-
-	for (auto const& set : toRemove) {
-		Reducts.erase(set);
-	}
-
-	if (verbose) {
+	/*if (verbose) {
 		std::cout << "Znaleziono redukty: [" << std::endl;
 		for (auto const& red : Reducts) {
 			std::cout << "\t[ ";
@@ -377,23 +328,92 @@ void RoughSetExpert::FindReducts()
 			std::cout << " ]" << std::endl;
 		}
 		std::cout << "]" << std::endl;
+	}*/
+}
+
+std::set<int> FindReducts(std::vector<std::set<int>>& cellsToConsider) {
+	if (cellsToConsider.empty())
+		return std::set<int>();
+
+	std::set<int> attrToConsider;
+	for (const auto& c : cellsToConsider) {
+		attrToConsider.insert(c.begin(), c.end());
 	}
+
+	std::set<int> smallestReduct;
+	int attribute;
+	for (auto const& a : attrToConsider) {
+		std::vector<std::set<int>> cells;
+		for (auto const& c : cellsToConsider) {
+			if (std::find(c.begin(), c.end(), a) == c.end()) {
+				cells.emplace_back(c);
+			}
+		}
+		auto reducts = FindReducts(cells);
+		if (!reducts.empty() && (smallestReduct.empty() || reducts.size() < smallestReduct.size())) {
+			smallestReduct = reducts;
+			attribute = a;
+		}
+	}
+	smallestReduct.insert(attribute);
+	return smallestReduct;
 }
 
 void RoughSetExpert::Greet()
 {
+	std::cout << "Witamy w systemie doradczym wyboru aktywnoœci." << std::endl;
+	std::cout << "Odpowiedz na pytania zgodnie ze wskazówkami przy pytaniach." << std::endl;
 }
 
-void RoughSetExpert::Ask()
+void RoughSetExpert::AskAndShowAnswer()
 {
-}
-
-void RoughSetExpert::ComputeResult()
-{
-}
-
-void RoughSetExpert::ShowResult()
-{
+	std::string decision;
+	for (auto& rule : Rules) {
+		bool inconsistentAnswer = false;
+		for (auto& cond : std::get<0>(rule)) {
+			int q = std::get<0>(cond);
+			char a = std::get<1>(cond);
+			char answer;
+			auto answerFound = Answers.find(q);
+			if (answerFound != Answers.end()) {
+				answer = answerFound->second;
+			}
+			else {
+				std::cout << std::get<0>(Questions[q]);
+				if (std::get<2>(Questions[q]) == 1) {
+					std::cout << " (0 - nie; 1 - tak)" << std::endl;
+				}
+				bool read = false;
+				int v;
+				while (!read) {
+					try {
+						std::string val;
+						std::cin >> val;
+						v = std::stoi(val);
+						read = true;
+					}
+					catch (...) {
+						read = false;
+					}
+					if (!read || v < 0 || v > std::get<2>(Questions[q])) {
+						std::cout << "Niezrozumia³a odpowiedŸ, spróbuj jeszcze raz." << std::endl;
+						read = false;
+					}
+				}
+				answer = (char)v;
+				Answers.insert({ q, answer });
+			}
+			if (answer != a) {
+				inconsistentAnswer = true;
+				break;
+			}
+		}
+		if (!inconsistentAnswer) {
+			decision = std::get<1>(rule);
+			break;
+		}
+	}
+	std::cout << "Podjêta decyzja: " << decision << std::endl;
 }
 
 int RoughSetExpert::LowerBound(const std::string& x)

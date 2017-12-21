@@ -45,7 +45,7 @@ void RoughSetExpert::Prepare()
 
 void RoughSetExpert::Run()
 {
-	Greet(); 
+	Greet();
 	AskAndShowAnswer();
 }
 
@@ -263,7 +263,7 @@ void RoughSetExpert::BuildIndistinguishableMatrix()
 		for (int j = 0; j < i; ++j) {
 			IndistinguishableMatrix[i].emplace_back(std::set<int>());
 			for (int q = 0; q < Nq; ++q) {
-				if (Table[q][i] != Table[q][j]) {
+				if (Table[q][i] != Table[q][j] && Table[q][i] >= 0 && Table[q][j] >= 0) {
 					IndistinguishableMatrix[i][j].insert(q);
 				}
 			}
@@ -307,7 +307,7 @@ void RoughSetExpert::FindRules()
 				if (it == cells.end())
 					break;
 				cells.erase(it);
-			}					
+			}
 		}
 		auto& otherReducts = FindReducts(cells);
 		reducts.insert(otherReducts.begin(), otherReducts.end());
@@ -317,18 +317,22 @@ void RoughSetExpert::FindRules()
 			conditions.insert({ a, Table[a][i] });
 		}
 		Rules.emplace_back(std::make_tuple(conditions, conclusion));
-	}
-	/*if (verbose) {
-		std::cout << "Znaleziono redukty: [" << std::endl;
-		for (auto const& red : Reducts) {
-			std::cout << "\t[ ";
-			for (auto const& a : red) {
+
+		if (verbose) {
+			std::cout << "Znaleziono najmniejszy redukt dla rekordu " << i << ": [ " << std::endl;
+			for (auto& a : reducts) {
 				std::cout << "\"" << std::get<0>(Questions[a]) << "\" ";
 			}
-			std::cout << " ]" << std::endl;
+			std::cout << "]" << std::endl;
+			std::cout << "Wygenerowana regu³a: " << std::endl;
+			std::cout << "IF" << std::endl;
+			for (auto& c : conditions) {
+				std::cout << "\t\"" << std::get<0>(Questions[c.first]) << "\" = " << (int)c.second << std::endl;
+			}
+			std::cout << "THEN" << std::endl;
+			std::cout << "\tAktywnoœæ = \"" << conclusion << "\"" << std::endl << std::endl;
 		}
-		std::cout << "]" << std::endl;
-	}*/
+	}
 }
 
 std::set<int> FindReducts(std::vector<std::set<int>>& cellsToConsider) {

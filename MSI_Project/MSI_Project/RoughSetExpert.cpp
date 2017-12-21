@@ -341,7 +341,7 @@ std::set<int> FindReducts(std::vector<std::set<int>>& cellsToConsider) {
 	}
 
 	std::set<int> smallestReduct;
-	int attribute;
+	int attribute = -1;
 	for (auto const& a : attrToConsider) {
 		std::vector<std::set<int>> cells;
 		for (auto const& c : cellsToConsider) {
@@ -350,12 +350,15 @@ std::set<int> FindReducts(std::vector<std::set<int>>& cellsToConsider) {
 			}
 		}
 		auto reducts = FindReducts(cells);
-		if (!reducts.empty() && (smallestReduct.empty() || reducts.size() < smallestReduct.size())) {
+		if (smallestReduct.empty() || reducts.size() < smallestReduct.size()) {
 			smallestReduct = reducts;
 			attribute = a;
+			if (reducts.empty())
+				break;
 		}
 	}
-	smallestReduct.insert(attribute);
+	if (attribute >= 0)
+		smallestReduct.insert(attribute);
 	return smallestReduct;
 }
 
